@@ -121,6 +121,42 @@ export const agedInventorySummary = {
   totalValue: 1420,
 }
 
+export interface SuggestedBundle {
+  name: string
+  description: string
+  items: string[]
+  totalRetail: number
+  suggestedPrice: number
+  savingsPct: number
+}
+
+export const suggestedBundles: SuggestedBundle[] = [
+  {
+    name: 'Jazz Fusion Starter Pack',
+    description: 'Bundle 3 slow-moving fusion titles into a discounted lot',
+    items: ['Herbie Hancock – Head Hunters', 'Weather Report – Heavy Weather', 'Freddie Hubbard – Red Clay'],
+    totalRetail: 61,
+    suggestedPrice: 45,
+    savingsPct: 26,
+  },
+  {
+    name: 'Spiritual Jazz Collection',
+    description: 'Pair two deep cuts that appeal to the same collector profile',
+    items: ['Pharoah Sanders – Karma', 'Ornette Coleman – The Shape of Jazz to Come'],
+    totalRetail: 130,
+    suggestedPrice: 99,
+    savingsPct: 24,
+  },
+  {
+    name: 'VG Budget Crate',
+    description: 'Move lower-grade stock as a value bundle for new collectors',
+    items: ['Stan Getz – Getz/Gilberto', 'Weather Report – Heavy Weather', 'Freddie Hubbard – Red Clay'],
+    totalRetail: 65,
+    suggestedPrice: 40,
+    savingsPct: 38,
+  },
+]
+
 export interface ReorderSignalItem {
   artist: string
   title: string
@@ -159,6 +195,8 @@ export const genrePerformance: GenrePerformance[] = [
 export interface TopGenreLabelItem {
   label: string
   percentage: number
+  artwork: string
+  topAlbum: string
 }
 
 export interface TopGenreDemand {
@@ -173,10 +211,10 @@ export const topGenreDemand: TopGenreDemand = {
   labelCount: 4,
   supplyPct: 78,
   labels: [
-    { label: 'Blue Note', percentage: 88 },
-    { label: 'Impulse!', percentage: 72 },
-    { label: 'ECM', percentage: 55 },
-    { label: 'Prestige', percentage: 40 },
+    { label: 'Blue Note', percentage: 88, artwork: '/labels/blue-note.jpeg', topAlbum: 'Art Blakey — Moanin\'' },
+    { label: 'Impulse!', percentage: 72, artwork: '/labels/impulse.jpeg', topAlbum: 'Coltrane — A Love Supreme' },
+    { label: 'ECM', percentage: 55, artwork: '/labels/ecm.jpeg', topAlbum: 'Keith Jarrett — Koln Concert' },
+    { label: 'Prestige', percentage: 40, artwork: '/labels/prestige.jpeg', topAlbum: 'Miles Davis — Cookin\'' },
   ],
 }
 
@@ -185,13 +223,14 @@ export interface CatalogGapItem {
   title: string
   searchCount: number
   velocity: number
+  artwork: string
 }
 
 export const catalogGapItems: CatalogGapItem[] = [
-  { artist: 'Pharoah Sanders', title: 'Karma', searchCount: 6, velocity: 95 },
-  { artist: 'Alice Coltrane', title: 'Ptah', searchCount: 4, velocity: 75 },
-  { artist: 'McCoy Tyner', title: 'Sahara', searchCount: 3, velocity: 60 },
-  { artist: 'Sun Ra', title: 'Space Is Place', searchCount: 1, velocity: 30 },
+  { artist: 'Pharoah Sanders', title: 'Karma', searchCount: 6, velocity: 95, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/01/36/a6/0136a666-36d2-caf1-efb1-da77a646d104/06UMGIM03764.rgb.jpg/400x400bb.jpg' },
+  { artist: 'Alice Coltrane', title: 'Ptah', searchCount: 4, velocity: 75, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/71/c5/2a/71c52a48-cd92-fb2b-f74e-c1edf51a25f1/06UMGIM04794.rgb.jpg/400x400bb.jpg' },
+  { artist: 'McCoy Tyner', title: 'Sahara', searchCount: 3, velocity: 60, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/d3/7e/42/d37e42e9-d777-d544-431c-108a4f84d6e6/00025218631129.rgb.jpg/400x400bb.jpg' },
+  { artist: 'Sun Ra', title: 'Space Is Place', searchCount: 1, velocity: 30, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/e7/31/78/e731786e-eba2-2d1c-6ff6-ff6e2354d48c/00011105024921.rgb.jpg/400x400bb.jpg' },
 ]
 
 // ─── NEW: Market Landscape ───────────────────────────────────

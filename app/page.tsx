@@ -9,7 +9,7 @@ import {
 import {
   heroStats, salesOverTimeData, salesBreakdown, channelSplit,
   customerLocations, customerSummary,
-  sellThroughStats, reorderSignalItems, agedInventoryItems, agedInventorySummary, genrePerformance,
+  sellThroughStats, reorderSignalItems, agedInventoryItems, agedInventorySummary, suggestedBundles, genrePerformance,
   topGenreDemand, catalogGapItems,
   marketTrends, marketHotspots, capitalFlowData,
   conditionBreakdowns,
@@ -25,12 +25,120 @@ const tooltipStyle = {
   itemStyle: { color: '#e8e0d8', fontFamily: 'IBM Plex Mono, monospace' },
 }
 
+type EntityType = 'genre' | 'label' | 'artist' | 'record' | 'region' | 'channel'
+
+interface PanelState {
+  open: boolean
+  type: EntityType
+  name: string
+}
+
+function EntityLink({ name, type, onClick }: { name: string; type: EntityType; onClick: (type: EntityType, name: string) => void }) {
+  return (
+    <span
+      className="cursor-pointer hover:underline decoration-text-muted underline-offset-2 decoration-dotted"
+      onClick={(e) => { e.stopPropagation(); onClick(type, name) }}
+    >
+      {name}
+    </span>
+  )
+}
+
+function EntityPanel({ panel, onClose }: { panel: PanelState; onClose: () => void }) {
+  if (!panel.open) return null
+
+  const typeLabels: Record<EntityType, string> = {
+    genre: 'Genre', label: 'Label', artist: 'Artist', record: 'Record', region: 'Region', channel: 'Channel',
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+      <div className="fixed right-0 top-0 bottom-0 w-[420px] bg-surface-card border-l border-border z-50 overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <span className="text-[10px] font-semibold px-2 py-0.5 bg-surface-raised border border-border text-text-muted">{typeLabels[panel.type]}</span>
+              <h2 className="text-lg font-semibold text-text mt-2">{panel.name}</h2>
+            </div>
+            <button onClick={onClose} className="text-text-muted hover:text-text text-lg leading-none">&times;</button>
+          </div>
+
+          {/* Mock analytics */}
+          <div className="space-y-5">
+            <div>
+              <h3 className="text-[10px] font-semibold tracking-wider text-text-muted mb-3">MARKET ANALYTICS</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Avg Sale Price', value: '$42' },
+                  { label: '30d Volume', value: '1,240' },
+                  { label: 'Price Trend', value: '+8%' },
+                  { label: 'Demand Score', value: '87/100' },
+                ].map((s) => (
+                  <div key={s.label} className="bg-surface-raised border border-border p-3">
+                    <p className="text-[9px] text-text-muted tracking-wider">{s.label}</p>
+                    <p className="text-lg font-semibold text-text font-[family-name:var(--font-mono)] mt-0.5">{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-[10px] font-semibold tracking-wider text-text-muted mb-3">YOUR INVENTORY</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'In Stock', value: '12' },
+                  { label: 'Sold (30d)', value: '5' },
+                  { label: 'Revenue', value: '$380' },
+                  { label: 'Avg Days to Sell', value: '14d' },
+                ].map((s) => (
+                  <div key={s.label} className="bg-surface-raised border border-border p-3">
+                    <p className="text-[9px] text-text-muted tracking-wider">{s.label}</p>
+                    <p className="text-lg font-semibold text-text font-[family-name:var(--font-mono)] mt-0.5">{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-[10px] font-semibold tracking-wider text-text-muted mb-3">SALES OVERVIEW</h3>
+              <div className="space-y-2">
+                {['Last 7 days', 'Last 30 days', 'Last 90 days'].map((period, i) => (
+                  <div key={period} className="flex items-center justify-between py-2 border-b border-border-subtle">
+                    <span className="text-xs text-text-secondary">{period}</span>
+                    <span className="text-xs font-semibold text-text font-[family-name:var(--font-mono)]">${[84, 380, 1120][i]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="pt-2 space-y-2">
+              <button className="w-full py-2.5 bg-positive/10 border border-positive/30 text-positive text-xs font-semibold hover:bg-positive/20 transition-colors">
+                View on Restock →
+              </button>
+              <button className="w-full py-2.5 bg-surface-raised border border-border text-text-secondary text-xs font-semibold hover:text-text transition-colors">
+                View on Marketplace →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState('ALL')
   const ranges = ['1D', '1W', '1M', '3M', '1Y', 'ALL']
+  const [panel, setPanel] = useState<PanelState>({ open: false, type: 'genre', name: '' })
+  const openPanel = (type: EntityType, name: string) => setPanel({ open: true, type, name })
+  const closePanel = () => setPanel((p) => ({ ...p, open: false }))
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-8">
+      <EntityPanel panel={panel} onClose={closePanel} />
 
       {/* ── Master Controls ── */}
       <div className="flex items-center gap-4 text-xs text-text-muted">
@@ -155,7 +263,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: ch.color }} />
-                      <span className="text-xs text-text font-medium">{ch.name}</span>
+                      <span className="text-xs text-text font-medium"><EntityLink name={ch.name} type="channel" onClick={openPanel} /></span>
                       <span className="text-[10px] text-text-muted">{pct}%</span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -231,7 +339,7 @@ export default function AnalyticsPage() {
                 <tbody>
                   {customerLocations.map((loc) => (
                     <tr key={loc.location} className="border-b border-border-subtle hover:bg-surface-raised/50">
-                      <td className="px-4 py-2.5 text-text">{loc.location}</td>
+                      <td className="px-4 py-2.5 text-text"><EntityLink name={loc.location} type="region" onClick={openPanel} /></td>
                       <td className="px-4 py-2.5 text-text-secondary text-center">{loc.customers}</td>
                       <td className="px-4 py-2.5 text-text font-[family-name:var(--font-mono)]">${loc.revenue.toLocaleString()}</td>
                       <td className="px-4 py-2.5 text-text-secondary font-[family-name:var(--font-mono)]">${loc.avgOrder}</td>
@@ -290,7 +398,7 @@ export default function AnalyticsPage() {
               <tbody>
                 {genrePerformance.map((g) => (
                   <tr key={g.genre} className="border-b border-border-subtle hover:bg-surface-raised/50">
-                    <td className="px-5 py-3 text-text font-medium">{g.genre}</td>
+                    <td className="px-5 py-3 text-text font-medium"><EntityLink name={g.genre} type="genre" onClick={openPanel} /></td>
                     <td className="px-5 py-3 text-text font-[family-name:var(--font-mono)]">${g.revenue.toLocaleString()}</td>
                     <td className="px-5 py-3 text-text-secondary font-[family-name:var(--font-mono)]">{g.unitsSold}</td>
                     <td className="px-5 py-3 text-text-secondary font-[family-name:var(--font-mono)]">${g.avgPrice}</td>
@@ -369,8 +477,8 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="text-xs font-medium text-text truncate">{item.title}</p>
-                  <p className="text-[11px] text-text-muted truncate">{item.artist}</p>
+                  <p className="text-xs font-medium text-text truncate"><EntityLink name={item.title} type="record" onClick={openPanel} /></p>
+                  <p className="text-[11px] text-text-muted truncate"><EntityLink name={item.artist} type="artist" onClick={openPanel} /></p>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
                     <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{item.soldLast30} sold / 30d</span>
                     <span className="text-[10px] font-semibold text-positive font-[family-name:var(--font-mono)]">{item.velocity}% vel</span>
@@ -420,8 +528,8 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="p-3">
-                  <p className="text-xs font-medium text-text truncate">{item.title}</p>
-                  <p className="text-[11px] text-text-muted truncate">{item.artist}</p>
+                  <p className="text-xs font-medium text-text truncate"><EntityLink name={item.title} type="record" onClick={openPanel} /></p>
+                  <p className="text-[11px] text-text-muted truncate"><EntityLink name={item.artist} type="artist" onClick={openPanel} /></p>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
                     <span className="text-sm font-semibold text-text font-[family-name:var(--font-mono)]">${item.price}</span>
                     <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{item.views} views</span>
@@ -436,6 +544,50 @@ export default function AnalyticsPage() {
                 <p className="text-xs text-text-secondary">aged items →</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Suggested Bundles from Aged Inventory */}
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-semibold px-2 py-0.5 bg-surface-raised border border-border text-text-muted">Suggested</span>
+              <h3 className="text-sm font-semibold text-text">Collections from sitting stock</h3>
+            </div>
+          </div>
+          <p className="text-[11px] text-text-muted mb-4">Bundle slow-moving inventory into discounted lots to accelerate sell-through.</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
+            {suggestedBundles.map((bundle) => (
+              <div key={bundle.name} className="flex-shrink-0 w-[280px] bg-surface-card border border-border p-4 hover:border-text-muted transition-colors">
+                <h4 className="text-xs font-semibold text-text">{bundle.name}</h4>
+                <p className="text-[10px] text-text-muted mt-1 mb-3">{bundle.description}</p>
+                <div className="space-y-1.5 mb-3">
+                  {bundle.items.map((item) => {
+                    const [artist, title] = item.split(' – ')
+                    return (
+                      <div key={item} className="flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-text-muted" />
+                        <span className="text-[11px] text-text-secondary truncate">
+                          <EntityLink name={artist} type="artist" onClick={openPanel} /> – <EntityLink name={title} type="record" onClick={openPanel} />
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="pt-3 border-t border-border-subtle">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-sm font-semibold text-text font-[family-name:var(--font-mono)]">${bundle.suggestedPrice}</span>
+                      <span className="text-[10px] text-text-muted line-through font-[family-name:var(--font-mono)]">${bundle.totalRetail}</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-positive font-[family-name:var(--font-mono)]">-{bundle.savingsPct}%</span>
+                  </div>
+                  <button className="w-full mt-3 py-2 bg-accent-warm/10 border border-accent-warm/30 text-accent-warm text-[11px] font-semibold hover:bg-accent-warm/20 transition-colors cursor-pointer">
+                    Create this bundle →
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -489,7 +641,7 @@ export default function AnalyticsPage() {
                     <span className={`w-1.5 h-1.5 rounded-full ${
                       t.direction === 'rising' ? 'bg-positive' : t.direction === 'declining' ? 'bg-negative' : 'bg-text-muted'
                     }`} />
-                    <span className="text-xs text-text">{t.genre}</span>
+                    <span className="text-xs text-text"><EntityLink name={t.genre} type="genre" onClick={openPanel} /></span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">${t.avgPrice} avg</span>
@@ -505,48 +657,80 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Top Genre Demand + Catalog Gap */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {/* Top Genre Demand */}
-          <div className="bg-surface-card border border-border p-5">
-            <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-orange-bg border border-tag-orange-border text-accent-warm">Top genre demand</span>
-            <h3 className="text-sm font-semibold text-text mt-3">Labels driving {topGenreDemand.topGenre} sales</h3>
-            <p className="text-[11px] text-text-muted mt-1 mb-5">
-              {topGenreDemand.topGenre} leads by margin marketplace-wide. These {topGenreDemand.labelCount} labels supply {topGenreDemand.supplyPct}% of top sellers.
-            </p>
-            <div className="space-y-3">
-              {topGenreDemand.labels.map((item) => (
-                <div key={item.label} className="flex items-center gap-3">
-                  <span className="text-xs text-text font-medium w-20 truncate">{item.label}</span>
-                  <div className="flex-1 h-1.5 bg-surface-raised overflow-hidden">
+        {/* Top Genre Demand — Label Carousel */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-orange-bg border border-tag-orange-border text-accent-warm">Top genre demand</span>
+              <h3 className="text-sm font-semibold text-text">Labels driving {topGenreDemand.topGenre} sales</h3>
+            </div>
+            <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{topGenreDemand.labelCount} labels · {topGenreDemand.supplyPct}% of top sellers</span>
+          </div>
+          <p className="text-[11px] text-text-muted mb-4">{topGenreDemand.topGenre} leads by margin marketplace-wide. Browse catalogs to restock from these distributors.</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
+            {topGenreDemand.labels.map((item) => (
+              <div key={item.label} className="flex-shrink-0 w-[200px] bg-surface-card border border-border overflow-hidden group hover:border-text-muted transition-colors">
+                <div className="h-[200px] bg-surface-raised relative overflow-hidden">
+                  <img src={item.artwork} alt={item.label} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-accent-warm/20 text-[10px] font-semibold text-accent-warm font-[family-name:var(--font-mono)]">
+                    {item.percentage}%
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-xs font-medium text-text"><EntityLink name={item.label} type="label" onClick={openPanel} /></p>
+                  <div className="h-1.5 bg-surface-raised overflow-hidden mt-2 mb-1">
                     <div className="h-full bg-accent-warm transition-all" style={{ width: `${item.percentage}%` }} />
                   </div>
-                  <span className="text-xs font-semibold text-text font-[family-name:var(--font-mono)] w-10 text-right">{item.percentage}%</span>
+                  <span className="text-[10px] text-text-muted">{item.percentage}% of {topGenreDemand.topGenre} supply</span>
                 </div>
-              ))}
+              </div>
+            ))}
+            <div className="flex-shrink-0 w-[200px] bg-surface-card border border-border-subtle flex items-center justify-center cursor-pointer hover:border-text-muted transition-colors">
+              <div className="text-center">
+                <p className="text-xs text-text-secondary">Browse all</p>
+                <p className="text-xs text-text-secondary">{topGenreDemand.topGenre} labels →</p>
+              </div>
             </div>
-            <p className="text-xs text-text-secondary mt-5 cursor-pointer hover:text-text">Browse their catalogs →</p>
           </div>
+        </div>
 
-          {/* Catalog Gap */}
-          <div className="bg-surface-card border border-border p-5">
-            <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-green-bg border border-tag-green-border text-positive">Catalog gap</span>
-            <h3 className="text-sm font-semibold text-text mt-3">Trending titles not widely carried</h3>
-            <p className="text-[11px] text-text-muted mt-1 mb-5">
-              Buyers searched for these {catalogGapItems.reduce((s, i) => s + i.searchCount, 0)} times last month — low availability across stores.
-            </p>
-            <div className="space-y-3">
-              {catalogGapItems.map((item) => (
-                <div key={`${item.artist}-${item.title}`} className="flex items-center gap-3">
-                  <span className="text-xs text-text font-medium flex-1 truncate">{item.artist} – {item.title}</span>
-                  <div className="w-24 h-1.5 bg-surface-raised overflow-hidden">
-                    <div className="h-full bg-accent-gold transition-all" style={{ width: `${item.velocity}%` }} />
-                  </div>
-                  <span className="text-xs font-semibold text-text-secondary font-[family-name:var(--font-mono)] w-6 text-right">x{item.searchCount}</span>
-                </div>
-              ))}
+        {/* Catalog Gap — Record Carousel */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-green-bg border border-tag-green-border text-positive">Catalog gap</span>
+              <h3 className="text-sm font-semibold text-text">Trending titles not widely carried</h3>
             </div>
-            <p className="text-xs text-text-secondary mt-5 cursor-pointer hover:text-text">Find these in marketplace →</p>
+            <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{catalogGapItems.reduce((s, i) => s + i.searchCount, 0)} searches last month</span>
+          </div>
+          <p className="text-[11px] text-text-muted mb-4">Buyers searched for these but found low availability across stores.</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
+            {catalogGapItems.map((item) => (
+              <div key={`${item.artist}-${item.title}`} className="flex-shrink-0 w-[200px] bg-surface-card border border-border overflow-hidden group hover:border-text-muted transition-colors">
+                <div className="h-[200px] bg-surface-raised relative overflow-hidden">
+                  <img src={item.artwork} alt={`${item.artist} – ${item.title}`} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-positive/20 text-[10px] font-semibold text-positive font-[family-name:var(--font-mono)]">
+                    x{item.searchCount}
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-xs font-medium text-text truncate"><EntityLink name={item.title} type="record" onClick={openPanel} /></p>
+                  <p className="text-[11px] text-text-muted truncate"><EntityLink name={item.artist} type="artist" onClick={openPanel} /></p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
+                    <span className="text-[10px] text-text-muted">Demand</span>
+                    <div className="w-16 h-1.5 bg-surface-raised overflow-hidden">
+                      <div className="h-full bg-positive transition-all" style={{ width: `${item.velocity}%` }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div className="flex-shrink-0 w-[200px] bg-surface-card border border-border-subtle flex items-center justify-center cursor-pointer hover:border-text-muted transition-colors">
+              <div className="text-center">
+                <p className="text-xs text-text-secondary">Find these in</p>
+                <p className="text-xs text-text-secondary">marketplace →</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -567,9 +751,9 @@ export default function AnalyticsPage() {
             <tbody>
               {marketHotspots.map((h) => (
                 <tr key={h.region} className="border-b border-border-subtle hover:bg-surface-raised/50">
-                  <td className="px-5 py-3 text-text font-medium">{h.region}</td>
+                  <td className="px-5 py-3 text-text font-medium"><EntityLink name={h.region} type="region" onClick={openPanel} /></td>
                   <td className="px-5 py-3 text-text font-[family-name:var(--font-mono)]">${h.totalSales.toLocaleString()}</td>
-                  <td className="px-5 py-3 text-text-secondary">{h.topGenre}</td>
+                  <td className="px-5 py-3 text-text-secondary"><EntityLink name={h.topGenre} type="genre" onClick={openPanel} /></td>
                   <td className="px-5 py-3 text-text-secondary font-[family-name:var(--font-mono)]">${h.avgOrderValue}</td>
                   <td className="px-5 py-3">
                     <span className="text-[11px] font-semibold text-positive font-[family-name:var(--font-mono)]">+{h.growth}%</span>
