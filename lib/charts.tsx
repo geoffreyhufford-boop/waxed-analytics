@@ -28,7 +28,7 @@ export function SalesChart() {
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(45,52,50,0.6)" />
         <XAxis dataKey="date" tick={{ fill: '#6a6560', fontSize: 10 }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fill: '#6a6560', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} domain={[0, 18000]} />
-        <Tooltip {...tooltipStyle} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Sales']} />
+        <Tooltip {...tooltipStyle} formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Sales']} />
         <Area type="monotone" dataKey="sales" stroke="#4a9a62" fill="url(#salesGrad)" strokeWidth={2} />
       </AreaChart>
     </ResponsiveContainer>
