@@ -346,8 +346,8 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Reorder Signal */}
-        <div className="bg-surface-card border border-border p-5">
+        {/* Reorder Signal — Carousel */}
+        <div>
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-red-bg border border-tag-red-border text-negative">Reorder signal</span>
@@ -355,20 +355,37 @@ export default function AnalyticsPage() {
             </div>
           </div>
           <p className="text-[11px] text-text-muted mb-4">These titles sold through and are trending. Restock before peak weekend traffic.</p>
-          <div className="space-y-3">
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
             {reorderSignalItems.map((item) => (
-              <div key={`${item.artist}-${item.title}`} className="flex items-center gap-4">
-                <span className="text-xs text-text font-medium w-[260px] truncate">{item.artist} – {item.title}</span>
-                <div className="flex-1 h-1.5 bg-surface-raised overflow-hidden">
-                  <div className="h-full bg-positive transition-all" style={{ width: `${item.velocity}%` }} />
+              <div key={`${item.artist}-${item.title}`} className="flex-shrink-0 w-[200px] bg-surface-card border border-border overflow-hidden group hover:border-text-muted transition-colors">
+                {/* Album art */}
+                <div className="h-[200px] bg-surface-raised relative overflow-hidden">
+                  <img src={item.artwork} alt={`${item.artist} – ${item.title}`} className="w-full h-full object-cover" />
+                  {/* Stock badge */}
+                  <div className={`absolute top-2 right-2 px-1.5 py-0.5 text-[10px] font-semibold font-[family-name:var(--font-mono)] ${
+                    item.stockLeft === 0 ? 'bg-negative/20 text-negative' : 'bg-accent-warm/20 text-accent-warm'
+                  }`}>
+                    {item.stockLeft === 0 ? 'SOLD OUT' : `${item.stockLeft} left`}
+                  </div>
                 </div>
-                <span className={`text-xs font-semibold font-[family-name:var(--font-mono)] w-12 text-right ${item.stockLeft === 0 ? 'text-negative' : 'text-text'}`}>
-                  {item.stockLeft} left
-                </span>
+                <div className="p-3">
+                  <p className="text-xs font-medium text-text truncate">{item.title}</p>
+                  <p className="text-[11px] text-text-muted truncate">{item.artist}</p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
+                    <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{item.soldLast30} sold / 30d</span>
+                    <span className="text-[10px] font-semibold text-positive font-[family-name:var(--font-mono)]">{item.velocity}% vel</span>
+                  </div>
+                </div>
               </div>
             ))}
+            {/* Restock CTA card */}
+            <div className="flex-shrink-0 w-[200px] bg-surface-card border border-border-subtle flex items-center justify-center cursor-pointer hover:border-text-muted transition-colors">
+              <div className="text-center">
+                <p className="text-xs text-text-secondary">Restock these</p>
+                <p className="text-xs text-text-secondary">titles →</p>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-text-secondary mt-4 cursor-pointer hover:text-text">Restock these titles →</p>
         </div>
 
         {/* Aged Inventory — Carousel */}
@@ -388,9 +405,9 @@ export default function AnalyticsPage() {
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
             {agedInventoryItems.map((item) => (
               <div key={`${item.artist}-${item.title}`} className="flex-shrink-0 w-[200px] bg-surface-card border border-border overflow-hidden group hover:border-text-muted transition-colors">
-                {/* Album art placeholder */}
-                <div className="h-[200px] bg-surface-raised flex items-center justify-center relative">
-                  <span className="text-3xl opacity-20">🎵</span>
+                {/* Album art */}
+                <div className="h-[200px] bg-surface-raised relative overflow-hidden">
+                  <img src={item.artwork} alt={`${item.artist} – ${item.title}`} className="w-full h-full object-cover" />
                   {/* Days badge */}
                   <div className={`absolute top-2 right-2 px-1.5 py-0.5 text-[10px] font-semibold font-[family-name:var(--font-mono)] ${
                     item.daysListed > 120 ? 'bg-negative/20 text-negative' : 'bg-accent-warm/20 text-accent-warm'

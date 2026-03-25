@@ -102,15 +102,16 @@ export interface AgedInventoryItem {
   condition: string
   price: number
   views: number
+  artwork: string
 }
 
 export const agedInventoryItems: AgedInventoryItem[] = [
-  { artist: 'Herbie Hancock', title: 'Head Hunters', daysListed: 142, condition: 'VG', price: 28, views: 3 },
-  { artist: 'Ornette Coleman', title: 'The Shape of Jazz to Come', daysListed: 118, condition: 'VG', price: 45, views: 7 },
-  { artist: 'Weather Report', title: 'Heavy Weather', daysListed: 104, condition: 'G+', price: 15, views: 2 },
-  { artist: 'Pharoah Sanders', title: 'Karma', daysListed: 97, condition: 'VG+', price: 85, views: 12 },
-  { artist: 'Stan Getz', title: 'Getz/Gilberto', daysListed: 89, condition: 'VG', price: 32, views: 5 },
-  { artist: 'Freddie Hubbard', title: 'Red Clay', daysListed: 82, condition: 'G+', price: 18, views: 1 },
+  { artist: 'Herbie Hancock', title: 'Head Hunters', daysListed: 142, condition: 'VG', price: 28, views: 3, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/4f/e5/f5/4fe5f511-462e-e87b-0711-d4e42809fb17/dj.goshfswo.jpg/400x400bb.jpg' },
+  { artist: 'Ornette Coleman', title: 'The Shape of Jazz to Come', daysListed: 118, condition: 'VG', price: 45, views: 7, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ec/fe/82/ecfe82b7-b821-b318-17ad-512b9cd1717b/s06.afpdcbhn.jpg/400x400bb.jpg' },
+  { artist: 'Weather Report', title: 'Heavy Weather', daysListed: 104, condition: 'G+', price: 15, views: 2, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/93/6e/c2/936ec2d4-1cc1-f60a-ff6c-4ba6f9ffcdb5/074646510827.jpg/400x400bb.jpg' },
+  { artist: 'Pharoah Sanders', title: 'Karma', daysListed: 97, condition: 'VG+', price: 85, views: 12, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/01/36/a6/0136a666-36d2-caf1-efb1-da77a646d104/06UMGIM03764.rgb.jpg/400x400bb.jpg' },
+  { artist: 'Stan Getz', title: 'Getz/Gilberto', daysListed: 89, condition: 'VG', price: 32, views: 5, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/54/04/b8/5404b8fd-3dbf-9fe1-0513-4611c4dec84e/06UMGIM14182.rgb.jpg/400x400bb.jpg' },
+  { artist: 'Freddie Hubbard', title: 'Red Clay', daysListed: 82, condition: 'G+', price: 18, views: 1, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music62/v4/2d/b0/b2/2db0b242-4d8f-f240-776b-c70f41cb4ad7/dj.xncuinrp.jpg/400x400bb.jpg' },
 ]
 
 export const agedInventorySummary = {
@@ -126,13 +127,14 @@ export interface ReorderSignalItem {
   stockLeft: number
   soldLast30: number
   velocity: number
+  artwork: string
 }
 
 export const reorderSignalItems: ReorderSignalItem[] = [
-  { artist: 'Miles Davis', title: 'Kind of Blue', stockLeft: 0, soldLast30: 8, velocity: 98 },
-  { artist: 'Coltrane', title: 'A Love Supreme', stockLeft: 1, soldLast30: 6, velocity: 92 },
-  { artist: 'Herbie Hancock', title: 'Head Hunters', stockLeft: 2, soldLast30: 5, velocity: 85 },
-  { artist: 'Charles Mingus', title: 'Ah Um', stockLeft: 3, soldLast30: 4, velocity: 72 },
+  { artist: 'Miles Davis', title: 'Kind of Blue', stockLeft: 0, soldLast30: 8, velocity: 98, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music/7f/9f/d6/mzi.vtnaewef.jpg/400x400bb.jpg' },
+  { artist: 'Coltrane', title: 'A Love Supreme', stockLeft: 1, soldLast30: 6, velocity: 92, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/e5/24/aa/e524aacd-467b-66f3-8931-0fcd6750a4b9/08UMGIM07914.rgb.jpg/400x400bb.jpg' },
+  { artist: 'Herbie Hancock', title: 'Head Hunters', stockLeft: 2, soldLast30: 5, velocity: 85, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/4f/e5/f5/4fe5f511-462e-e87b-0711-d4e42809fb17/dj.goshfswo.jpg/400x400bb.jpg' },
+  { artist: 'Charles Mingus', title: 'Ah Um', stockLeft: 3, soldLast30: 4, velocity: 72, artwork: 'https://is1-ssl.mzstatic.com/image/thumb/Music/85/f3/ef/mzi.etlgbitd.jpg/400x400bb.jpg' },
 ]
 
 export interface GenrePerformance {
