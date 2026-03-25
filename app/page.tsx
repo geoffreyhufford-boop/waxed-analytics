@@ -371,8 +371,8 @@ export default function AnalyticsPage() {
           <p className="text-xs text-text-secondary mt-4 cursor-pointer hover:text-text">Restock these titles →</p>
         </div>
 
-        {/* Aged Inventory — Days on Shelf */}
-        <div className="bg-surface-card border border-border p-5 mt-6">
+        {/* Aged Inventory — Carousel */}
+        <div className="mt-6">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-semibold px-2 py-0.5 bg-tag-orange-bg border border-tag-orange-border text-accent-warm">Aged inventory</span>
@@ -384,30 +384,42 @@ export default function AnalyticsPage() {
               <span>${agedInventorySummary.totalValue.toLocaleString()} tied up</span>
             </div>
           </div>
-          <p className="text-[11px] text-text-muted mb-4">These listings have low velocity and few views. Consider repricing, bundling, or moving to a sale channel.</p>
-          <div className="space-y-3">
+          <p className="text-[11px] text-text-muted mb-4">Low velocity, few views. Consider repricing, bundling, or moving to a sale channel.</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#2d3432 transparent' }}>
             {agedInventoryItems.map((item) => (
-              <div key={`${item.artist}-${item.title}`} className="flex items-center gap-4">
-                <span className="text-xs text-text font-medium w-[260px] truncate">{item.artist} – {item.title}</span>
-                <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)] w-8">{item.condition}</span>
-                <div className="flex-1 h-1.5 bg-surface-raised overflow-hidden">
-                  <div
-                    className="h-full transition-all"
-                    style={{
-                      width: `${Math.min((item.daysListed / 150) * 100, 100)}%`,
-                      backgroundColor: item.daysListed > 120 ? '#c45e4e' : item.daysListed > 90 ? '#c4a24e' : '#6a6560',
-                    }}
-                  />
+              <div key={`${item.artist}-${item.title}`} className="flex-shrink-0 w-[200px] bg-surface-card border border-border overflow-hidden group hover:border-text-muted transition-colors">
+                {/* Album art placeholder */}
+                <div className="h-[200px] bg-surface-raised flex items-center justify-center relative">
+                  <span className="text-3xl opacity-20">🎵</span>
+                  {/* Days badge */}
+                  <div className={`absolute top-2 right-2 px-1.5 py-0.5 text-[10px] font-semibold font-[family-name:var(--font-mono)] ${
+                    item.daysListed > 120 ? 'bg-negative/20 text-negative' : 'bg-accent-warm/20 text-accent-warm'
+                  }`}>
+                    {item.daysListed}d
+                  </div>
+                  {/* Condition badge */}
+                  <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-surface-card/80 text-[10px] font-semibold text-text-secondary font-[family-name:var(--font-mono)]">
+                    {item.condition}
+                  </div>
                 </div>
-                <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)] w-14 text-right">{item.views} views</span>
-                <span className="text-xs font-semibold text-text font-[family-name:var(--font-mono)] w-10 text-right">${item.price}</span>
-                <span className={`text-xs font-semibold font-[family-name:var(--font-mono)] w-12 text-right ${item.daysListed > 120 ? 'text-negative' : 'text-accent-warm'}`}>
-                  {item.daysListed}d
-                </span>
+                <div className="p-3">
+                  <p className="text-xs font-medium text-text truncate">{item.title}</p>
+                  <p className="text-[11px] text-text-muted truncate">{item.artist}</p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
+                    <span className="text-sm font-semibold text-text font-[family-name:var(--font-mono)]">${item.price}</span>
+                    <span className="text-[10px] text-text-muted font-[family-name:var(--font-mono)]">{item.views} views</span>
+                  </div>
+                </div>
               </div>
             ))}
+            {/* See all card */}
+            <div className="flex-shrink-0 w-[200px] bg-surface-card border border-border-subtle flex items-center justify-center cursor-pointer hover:border-text-muted transition-colors">
+              <div className="text-center">
+                <p className="text-xs text-text-secondary">View all {agedInventorySummary.totalAged}</p>
+                <p className="text-xs text-text-secondary">aged items →</p>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-text-secondary mt-4 cursor-pointer hover:text-text">View all aged inventory →</p>
         </div>
       </div>
 
